@@ -56,6 +56,7 @@ public class ProductServiceImpl implements ProductService {
         product.setId(IdGenerator.getGenerationId());
         product.setCategory(categoryService.getCategoryEntityById(productCreateDTO.getCategoryId()));
         product.setStatus(AvailabilityStatus.ACTIVE);
+        product.setQuantity(100);
 
         Restaurant restaurant = restaurantService.getById(productCreateDTO.getRestaurantId());
         product.setRestaurant(restaurant);
@@ -95,6 +96,8 @@ public class ProductServiceImpl implements ProductService {
             log.info("Image upload result: {}", imageUrl);
             existingProduct.setImgMain((String) imageUrl.get("url"));
         }
+
+
 
         return productMapper.covertEntityToDTO(productRepository.save(existingProduct));
     }
