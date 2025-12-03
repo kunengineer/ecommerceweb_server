@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict Jp0KfkD4aSpt4T52gvAQhIONJTl5Z58gxRt5dxaH654PQiRq9xYp4BBo02R6DDu
+\restrict ngNyFb0iAFOVCd1YTObc3aoCdsfcfeD7UK3hLkmeojGfTPwGCOqILzAauOHzSbB
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -485,6 +485,7 @@ CREATE TABLE public.voucher (
 
 COPY public.account (active, id, status, created_at, updated_at, account_name, email, password, role) FROM stdin;
 t	1140702739	t	2025-12-03 08:05:34.276814	2025-12-03 08:05:57.14849	Nguyen Van A	kien06112004@gmail.com	$2a$10$nTm42gzpxwrJfrDsm0feMu3t50z6yPPLdAHcRoaMNxMeRqJi.DvrG	USER
+t	1747144264	t	2025-12-03 12:49:30.74218	2025-12-03 12:49:30.74218	Nguyen Van A	admin@demo.com	$2a$10$DAwTqoQZy3W5ZQxlML6lL.eJ3bBngu.1x3g1Xz3sgc0L4xXt77Wii	ADMIN
 \.
 
 
@@ -701,6 +702,7 @@ COPY public.product (category_id, id, price_base, quantity, restaurant_id, creat
 3	48	52000.00	80	2	2025-12-03 01:03:02.453992	2025-12-03 01:03:02.453992	Gà rán kèm sốt phô mai	ga_sot_pho_mai.jpg	Gà Sốt Phô Mai	ACTIVE
 4	49	24000.00	130	2	2025-12-03 01:03:02.453992	2025-12-03 01:03:02.453992	Trà tắc pha mật ong	tra_tac_mat_ong.jpg	Trà Tắc Mật Ong	ACTIVE
 5	50	25000.00	100	2	2025-12-03 01:03:02.453992	2025-12-03 01:03:02.453992	Bánh chuối chiên giòn vàng	banh_chuoi_chien.jpg	Bánh Chuối Chiên	ACTIVE
+1	113619052	145000.00	0	1	2025-12-03 13:03:07.265009	2025-12-03 13:03:07.265009	a	\N	HH	ACTIVE
 \.
 
 
@@ -728,6 +730,9 @@ COPY public.restaurant_inventory (id, price, product_id, stock_quantity) FROM st
 
 COPY public.token (account_id, id, created_at, expiration_time, updated_at, token, token_type) FROM stdin;
 1140702739	2	2025-12-03 08:06:36.142611	2025-12-10 08:06:36.141659	2025-12-03 08:06:36.142611	eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJVU0VSIl0sInN1YiI6ImtpZW4wNjExMjAwNEBnbWFpbC5jb20iLCJpYXQiOjE3NjQ3MjM5OTYsImV4cCI6MTc2NTMyODc5Nn0.ovYelHwskjW-wAxFNF1qjKfqGI3ex4rmcCwIc0YqKf0	REFRESH_TOKEN
+1747144264	3	2025-12-03 12:49:30.79202	2025-12-03 12:54:30.790017	2025-12-03 12:49:30.79202	fcc40a47-f42c-4154-9dd8-7302b6d46c07	EMAIL_VERIFICATION
+1747144264	4	2025-12-03 12:55:08.915273	2025-12-10 12:55:08.909151	2025-12-03 12:55:08.915273	eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJhZG1pbkBkZW1vLmNvbSIsImlhdCI6MTc2NDc0MTMwOCwiZXhwIjoxNzY1MzQ2MTA4fQ.mX1s7K82hVcmzSdpQ-QC96egwq8i1R6Rm-tZ9v7XRrw	REFRESH_TOKEN
+1747144264	5	2025-12-03 12:56:21.121913	2025-12-10 12:56:21.120756	2025-12-03 12:56:21.121913	eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJhZG1pbkBkZW1vLmNvbSIsImlhdCI6MTc2NDc0MTM4MSwiZXhwIjoxNzY1MzQ2MTgxfQ.tenFgARWquyhUqev0lNFDDEIMcJsU54jglS2d7eCfoE	REFRESH_TOKEN
 \.
 
 
@@ -780,7 +785,7 @@ SELECT pg_catalog.setval('public.restaurant_inventory_id_seq', 1, false);
 -- Name: token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.token_id_seq', 2, true);
+SELECT pg_catalog.setval('public.token_id_seq', 5, true);
 
 
 --
@@ -1307,5 +1312,5 @@ ALTER TABLE ONLY public.carts
 -- PostgreSQL database dump complete
 --
 
-\unrestrict Jp0KfkD4aSpt4T52gvAQhIONJTl5Z58gxRt5dxaH654PQiRq9xYp4BBo02R6DDu
+\unrestrict ngNyFb0iAFOVCd1YTObc3aoCdsfcfeD7UK3hLkmeojGfTPwGCOqILzAauOHzSbB
 
