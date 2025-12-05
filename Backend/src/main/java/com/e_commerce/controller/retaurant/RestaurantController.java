@@ -57,7 +57,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getOrders(id));
     }
 
-    @GetMapping("/{id}/revenue")
+    @GetMapping("/{id}/revenued")
     public ResponseEntity<BigDecimal> getRevenue(
             @PathVariable Integer id,
             @RequestParam(required = false) String from,
