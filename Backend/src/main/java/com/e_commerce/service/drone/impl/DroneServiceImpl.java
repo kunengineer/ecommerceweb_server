@@ -69,7 +69,7 @@ public class DroneServiceImpl implements DroneService {
                 .model(droneCreateDTO.getModel())
                 .maxRangeKm(droneCreateDTO.getMaxRangeKm())
                 .batteryPct(droneCreateDTO.getBatteryPct() != null ? droneCreateDTO.getBatteryPct() : 100.0)
-                .avgSpeedKmh(droneCreateDTO.getAvgSpeedKmh() != null ? droneCreateDTO.getAvgSpeedKmh() : 30.0)
+                .avgSpeedKmh(droneCreateDTO.getAvgSpeedKmh() != null ? droneCreateDTO.getAvgSpeedKmh() : 50.0)
                 .status(DroneStatus.IDLE)
                 .restaurant(restaurant)
                 .build();

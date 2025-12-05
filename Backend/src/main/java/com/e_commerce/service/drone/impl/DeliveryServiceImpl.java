@@ -79,8 +79,13 @@ public class DeliveryServiceImpl implements DeliveryService {
         }
 
         // Tính thời gian ước tính
-        double averageSpeedKmH = drone.getAvgSpeedKmh() != null ? drone.getAvgSpeedKmh() : 30.0; // default 30 km/h
-        double hours = requiredRangeKm / averageSpeedKmH;
+        double averageSpeedKmH = drone.getAvgSpeedKmh() != null ? drone.getAvgSpeedKmh() : 50.0; // default 30 km/h
+
+        double speedMultiplier = 2.0;
+
+        double simulatedSpeed = averageSpeedKmH * speedMultiplier;
+
+        double hours = requiredRangeKm / simulatedSpeed ;
         long seconds = (long) (hours * 3600);
 
         LocalDateTime estimatedDeliveryTime = LocalDateTime.now().plusSeconds(seconds);

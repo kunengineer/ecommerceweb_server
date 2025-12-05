@@ -79,41 +79,41 @@ public class AccountServiceImpl implements AccountService {
 
 
         if (!passwordEncoder.matches(loginForm.getPassword(), account.getPassword())) {
-            loginAttemptService.loginFailed(loginForm.getEmail());
-            int remaining = loginAttemptService.getRemainingAttempts(loginForm.getEmail());
-
-
-            if (remaining <= 0) {
-                loginAttemptService.lockTemporarily(loginForm.getEmail());
-
-                long fraudCount = loginAttemptService.incrementFraud(loginForm.getEmail());
-
-                if (fraudCount >= 3) {
-                    account.setActive(false);
-                    accountRepository.save(account);
-
-                    loginAttemptService.clearLoginState(loginForm.getEmail());
-
-                    throw new CustomException(List.of(ErrorResponse.FRAUDULENT_LOGIN_DETECTED),
-                            "Phát hiện nhiều lần đăng nhập thất bại. Tài khoản đã bị khóa vĩnh viễn. Vui lòng liên hệ hỗ trợ.");
-                }
-
-                long lockTimeRemaining = loginAttemptService.getLockTimeRemaining(loginForm.getEmail());
-                throw new CustomException(List.of(ErrorResponse.ACCOUNT_MAX_LOGIN_ATTEMPTS_EXCEEDED),
-                        "Tài khoản bị khóa trong " + lockTimeRemaining + " phút.");
-            }
-            String message = "Invalid credentials. You have " + remaining + " attempt(s) left.";
-            throw new CustomException(List.of(ErrorResponse.ACCOUNT_PASSWORD_MISMATCH),message);
+//            loginAttemptService.loginFailed(loginForm.getEmail());
+//            int remaining = loginAttemptService.getRemainingAttempts(loginForm.getEmail());
+//
+//
+//            if (remaining <= 0) {
+//                loginAttemptService.lockTemporarily(loginForm.getEmail());
+//
+//                long fraudCount = loginAttemptService.incrementFraud(loginForm.getEmail());
+//
+//                if (fraudCount >= 3) {
+//                    account.setActive(false);
+//                    accountRepository.save(account);
+//
+//                    loginAttemptService.clearLoginState(loginForm.getEmail());
+//
+//                    throw new CustomException(List.of(ErrorResponse.FRAUDULENT_LOGIN_DETECTED),
+//                            "Phát hiện nhiều lần đăng nhập thất bại. Tài khoản đã bị khóa vĩnh viễn. Vui lòng liên hệ hỗ trợ.");
+//                }
+//
+//                long lockTimeRemaining = loginAttemptService.getLockTimeRemaining(loginForm.getEmail());
+//                throw new CustomException(List.of(ErrorResponse.ACCOUNT_MAX_LOGIN_ATTEMPTS_EXCEEDED),
+//                        "Tài khoản bị khóa trong " + lockTimeRemaining + " phút.");
+//            }
+//            String message = "Invalid credentials. You have " + remaining + " attempt(s) left.";
+            throw new CustomException(ErrorResponse.ACCOUNT_PASSWORD_MISMATCH);
         }
 
-        if (loginAttemptService.isBlocked(loginForm.getEmail())) {
-            long lockTimeRemaining = loginAttemptService.getLockTimeRemaining(loginForm.getEmail());
-            String message = "Your account is locked due to multiple failed login attempts. Please try again in " + lockTimeRemaining + " minute(s).";
-            throw new CustomException(List.of(ErrorResponse.ACCOUNT_MAX_LOGIN_ATTEMPTS_EXCEEDED), message);
-        }
+//        if (loginAttemptService.isBlocked(loginForm.getEmail())) {
+//            long lockTimeRemaining = loginAttemptService.getLockTimeRemaining(loginForm.getEmail());
+//            String message = "Your account is locked due to multiple failed login attempts. Please try again in " + lockTimeRemaining + " minute(s).";
+//            throw new CustomException(List.of(ErrorResponse.ACCOUNT_MAX_LOGIN_ATTEMPTS_EXCEEDED), message);
+//        }
 
 
-        loginAttemptService.loginSucceeded(loginForm.getEmail());
+//        loginAttemptService.loginSucceeded(loginForm.getEmail());
         String jwtToken = jwtUtil.generateToken(account);
         String refreshToken = jwtUtil.generateRefreshToken(account);
 
@@ -142,7 +142,7 @@ public class AccountServiceImpl implements AccountService {
         if(registrationForm.getRole() == AccountRole.STAFF || registrationForm.getRole() == AccountRole.ADMIN) {
             account.setStatus(true);
         }else {
-            account.setStatus(false);
+            account.setStatus(true);
         }
 
         Account savedAccount = accountRepository.save(account);
