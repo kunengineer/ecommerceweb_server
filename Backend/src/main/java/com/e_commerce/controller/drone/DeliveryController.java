@@ -40,4 +40,15 @@ public class DeliveryController {
                 .status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(true, "Delivery created successfully", deliveryDTO, null, request.getRequestURI()));
     }
+
+    @GetMapping("/order")
+    public ResponseEntity<ApiResponse<DeliveryDTO>> getDeliveryByOrderId(
+            @RequestParam Integer orderId,
+            HttpServletRequest request
+    ) {
+        DeliveryDTO deliveryDTO = deliveryService.getDeliveryByOrderId(orderId);
+        return ResponseEntity.ok(
+                new ApiResponse<>(true, "Delivery fetched successfully", deliveryDTO, null, request.getRequestURI())
+        );
+    }
 }
