@@ -16,6 +16,7 @@ import com.e_commerce.service.drone.DroneService;
 import com.e_commerce.service.drone.DroneTrackingService;
 import com.e_commerce.service.order.OrderService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -116,6 +117,13 @@ public class DeliveryServiceImpl implements DeliveryService {
                 Instant.now().plusSeconds(seconds));
 
         return deliveryMapper.convertToDTO(savedDelivery);
+    }
+
+    @Override
+    public DeliveryDTO getDeliveryByOrderId(Integer orderId) {
+        Delivery delivery = deliveryRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new RuntimeException("Delivery not found for order: " + orderId));
+        return deliveryMapper.convertToDTO(delivery);
     }
 
     private double calculateRoundTripDistanceKm(Orders order) {

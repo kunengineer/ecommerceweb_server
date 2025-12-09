@@ -15,4 +15,6 @@ public interface DeliveryService {
     Delivery getDeliveryById(Integer deliveryId);
 
     DeliveryDTO createDelivery(Integer orderId, Integer droneId);
+
+    DeliveryDTO getDeliveryByOrderId(Integer orderId);
 }
