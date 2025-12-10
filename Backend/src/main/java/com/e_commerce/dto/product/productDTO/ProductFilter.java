@@ -11,6 +11,8 @@ public class ProductFilter {
 
     private Integer productId;
 
+    private Integer restaurantId;
+
     private String status;
 
     private String name;
