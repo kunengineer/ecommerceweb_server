@@ -25,5 +25,5 @@ public class ProductDTO {
 
     private String imgMain;
 
-    private Integer storeId;
+    private Integer restaurantId;
 }

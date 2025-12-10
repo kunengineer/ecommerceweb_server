@@ -21,7 +21,7 @@ public class ProductMapper {
                 .priceBase(product.getPriceBase())
                 .description(product.getDescription())
                 .imgMain(product.getImgMain())
-                .storeId(product.getRestaurant().getId())
+                .restaurantId(product.getRestaurant().getId())
                 .build();
     }
 
