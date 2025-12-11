@@ -26,7 +26,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     private static final List<OrderStatus> ACTIVE_ORDER_STATUSES = List.of(
             OrderStatus.PLACED,
             OrderStatus.CONFIRMED,
-            OrderStatus.IN_PROGRESS
+            OrderStatus.IN_PROGRESS,
+            OrderStatus.OUT_FOR_DELIVERY,
+            OrderStatus.READY_FOR_DELIVERY,
+            OrderStatus.FAILED,
+            OrderStatus.REJECTED,
+            OrderStatus.CANCELLED,
+            OrderStatus.DELIVERED
     );
 
 
