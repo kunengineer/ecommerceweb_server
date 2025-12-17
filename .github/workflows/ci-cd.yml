@@ -16,10 +16,10 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: 17
+          java-version: 21
 
       - name: Run unit tests
-        run: mvn -B test
+        run: mvn -B test --file Backend/pom.xml
 
       - name: SonarQube scan
         uses: kitabisa/sonarqube-action@v1.2.0
