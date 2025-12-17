@@ -45,8 +45,8 @@ jobs:
       - name: Build & push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
-          file: Dockerfile
+          context: ./Backend
+          file: ./Backend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rest-api:v1.0.0
           login: true
