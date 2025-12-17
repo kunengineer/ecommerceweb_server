@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<sonar.organization>kunengineer</sonar.organization>
 	</properties>
 	<dependencies>
 
@@ -171,7 +172,6 @@
 		</dependency>
 
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
