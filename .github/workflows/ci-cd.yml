@@ -32,7 +32,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-          
+
+      - name: Check Java version
+        run: java -version
 
       - name: Run unit tests
         run: mvn -B test --file Backend/pom.xml
