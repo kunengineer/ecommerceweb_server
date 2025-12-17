@@ -47,10 +47,12 @@ jobs:
         run: |
           sonar-scanner \
             -Dsonar.projectKey=my-custom-project \
-            -Dsonar.organization=my-org \
             -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} \
             -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} \
             -Dsonar.projectBaseDir=Backend
+            
+      - name: Add SonarScanner to PATH
+        run: echo "PATH=$PWD/sonar-scanner-4.8.1.3023-linux/bin:$PATH" >> $GITHUB_ENV
 
       - name: Build jar
         run: mvn clean package -DskipTests
