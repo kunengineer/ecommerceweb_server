@@ -1,5 +1,6 @@
 package com.e_commerce.dto.auth.accountDTO;
 
+import com.e_commerce.dto.auth.userInfoDTO.UserInfoDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +20,5 @@ public class AccountDTO {
     private Boolean status;
     private String role;
     private String active;
+    private UserInfoDTO userInformation;
 }

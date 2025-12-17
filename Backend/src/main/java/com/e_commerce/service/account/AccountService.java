@@ -23,6 +23,8 @@ public interface AccountService extends UserDetailsService {
 
     Account getAccountEntityById(int id);
 
+    AccountDTO getAccountDTOById(int id);
+
     AuthenticationDTO refreshToken(RefreshTokenDTO refreshTokenDTO);
 
     Account getAccountByEmail(String email);
@@ -42,4 +44,8 @@ public interface AccountService extends UserDetailsService {
     void lockAccount(int accountId);
 
     void unlockAccount(int accountId);
+
+    AccountDTO createAccountWithUserInfo(AccountWithUserInfoCreateDTO dto);
+
+    AccountDTO updateAccountWithUserInfo(int accountId, AccountWithUserInfoUpdateDTO dto);
 }

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -111,4 +112,42 @@ public class AccountController {
         accountService.unlockAccount(id);
         return ResponseEntity.ok(new ApiResponse<>(true,"Account unlocked successfully", null, null, request.getRequestURI()));
     }
+
+    @GetMapping("users/detail")
+    public ResponseEntity<ApiResponse<AccountDTO>> getAccountById( @RequestParam("id") int id, HttpServletRequest request) {
+        AccountDTO accountDTO = accountService.getAccountDTOById(id);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Get account by ID successfully", accountDTO, null, request.getRequestURI()));
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<ApiResponse<AccountDTO>> createAccountWithUserInfo(
+            @RequestBody @Valid AccountWithUserInfoCreateDTO dto,
+            HttpServletRequest request) {
+
+        AccountDTO result = accountService.createAccountWithUserInfo(dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(true, "Create account with user information successfully", result, null, request.getRequestURI()));
+    }
+
+    @PutMapping("/users")
+    public ResponseEntity<ApiResponse<AccountDTO>> updateAccountWithUserInfo(
+            @RequestParam("id") int accountId,
+            @RequestBody @Valid AccountWithUserInfoUpdateDTO dto,
+            HttpServletRequest request) {
+
+        AccountDTO result = accountService.updateAccountWithUserInfo(accountId, dto);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "Update account with user information successfully", result, null, request.getRequestURI()));
+    }
+
+    @DeleteMapping("/users")
+    public ResponseEntity<ApiResponse<Void>> deleteAccountById(
+            @RequestParam("id") Integer accountId,
+            HttpServletRequest request) {
+        accountService.deleteByAccountId(accountId);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Delete account successfully", null, null, request.getRequestURI()));
+    }
+
 }

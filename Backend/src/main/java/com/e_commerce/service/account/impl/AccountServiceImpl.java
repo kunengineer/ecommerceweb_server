@@ -13,6 +13,7 @@ import com.e_commerce.exceptions.ErrorResponse;
 import com.e_commerce.mapper.account.AccountMapper;
 import com.e_commerce.orther.IdGenerator;
 import com.e_commerce.repository.account.AccountRepository;
+import com.e_commerce.repository.account.UserInformationRepository;
 import com.e_commerce.service.account.AccountService;
 import com.e_commerce.service.account.TokenService;
 import com.e_commerce.service.account.token.TokenBlacklistService;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -48,9 +50,10 @@ public class AccountServiceImpl implements AccountService {
     private final ApplicationEventPublisher eventPublisher;
     private final OtpUtil otpUtil;
     private final LoginAttemptService loginAttemptService;
+    private final UserInformationRepository userInformationRepository;
 
     public AccountServiceImpl(@Lazy PasswordEncoder passwordEncoder, JwtUtil jwtUtil, AccountMapper accountMapper,
-                              AccountRepository accountRepository, TokenBlacklistService tokenBlacklistService, TokenService tokenService, ApplicationEventPublisher eventPublisher, OtpUtil otpUtil, LoginAttemptService loginAttemptService) {
+                              AccountRepository accountRepository, TokenBlacklistService tokenBlacklistService, TokenService tokenService, ApplicationEventPublisher eventPublisher, OtpUtil otpUtil, LoginAttemptService loginAttemptService, UserInformationRepository userInformationRepository) {
         this.loginAttemptService = loginAttemptService;
         this.otpUtil = otpUtil;
         this.eventPublisher = eventPublisher;
@@ -60,6 +63,7 @@ public class AccountServiceImpl implements AccountService {
         this.accountMapper = accountMapper;
         this.accountRepository = accountRepository;
         this.tokenBlacklistService = tokenBlacklistService;
+        this.userInformationRepository = userInformationRepository;
     }
 
     @Transactional(noRollbackFor = CustomException.class)
@@ -173,6 +177,12 @@ public class AccountServiceImpl implements AccountService {
     public Account getAccountEntityById(int id) {
         return accountRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorResponse.ACCOUNT_NOT_FOUND));
+    }
+
+    @Override
+    public AccountDTO getAccountDTOById(int id) {
+        Account account = getAccountEntityById(id);
+        return convertToDTO(account);
     }
 
     @Override
@@ -339,6 +349,63 @@ public class AccountServiceImpl implements AccountService {
         account.setActive(true);
         accountRepository.save(account);
     }
+
+    @Transactional
+    @Override
+    public AccountDTO createAccountWithUserInfo(AccountWithUserInfoCreateDTO dto) {
+
+        if (accountRepository.existsByEmail(dto.getEmail())) {
+            throw new CustomException(ErrorResponse.ACCOUNT_ALREADY_EXISTS);
+        }
+
+        Account account = accountMapper.convertAccountWithUserInfoCreateDTOToEntity(dto);
+        account.setId(IdGenerator.getGenerationId());
+        account.setPassword(passwordEncoder.encode(dto.getPassword()));
+        account.setUserInformation(new ArrayList<>());
+
+        UserInformation userInformation = new UserInformation();
+        userInformation.setId(IdGenerator.getGenerationId());
+        userInformation.setFullName(dto.getFullName());
+        userInformation.setPhoneNumber(dto.getPhoneNumber());
+        userInformation.setAddress(dto.getAddress());
+        userInformation.setIsDefault(true);
+
+        userInformation.setAccount(account);
+        account.getUserInformation().add(userInformation);
+
+        Account savedAccount = accountRepository.save(account);
+
+        return accountMapper.convertEntityToDTO(savedAccount);
+    }
+
+    @Override
+    public AccountDTO updateAccountWithUserInfo(int accountId, AccountWithUserInfoUpdateDTO dto) {
+        Account account = getAccountEntityById(accountId);
+
+        if (dto.getAccountName() != null) {
+            account.setAccountName(dto.getAccountName());
+        }
+
+        UserInformation userInformation;
+        if (account.getUserInformation().isEmpty()) {
+            userInformation = new UserInformation();
+            userInformation.setId(IdGenerator.getGenerationId());
+            userInformation.setAccount(account);
+            account.getUserInformation().add(userInformation);
+        } else {
+            userInformation = account.getUserInformation().get(0);
+        }
+
+        userInformation.setFullName(dto.getFullName());
+        userInformation.setPhoneNumber(dto.getPhoneNumber());
+        userInformation.setAddress(dto.getAddress());
+        userInformation.setGender(dto.getGender());
+
+        Account updatedAccount = accountRepository.save(account);
+
+        return accountMapper.convertEntityToDTO(updatedAccount);
+    }
+
 
     private AccountDTO convertToDTO(Account account) {
         UserInformation userInfo = account.getUserInformation().isEmpty() ? null : account.getUserInformation().get(0);
