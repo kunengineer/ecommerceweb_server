@@ -21,7 +21,7 @@ public class AccountMapper {
 
         UserInformation userInfo = null;
         if (account.getUserInformation() != null && !account.getUserInformation().isEmpty()) {
-            userInfo = account.getUserInformation().getFirst();
+            userInfo = account.getUserInformation().get(0);
         }
 
         return AccountDTO.builder()
