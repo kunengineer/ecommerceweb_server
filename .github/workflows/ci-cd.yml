@@ -24,11 +24,11 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: 17
@@ -37,13 +37,20 @@ jobs:
       - name: Run unit tests
         run: mvn -B test --file Backend/pom.xml
 
+      - name: Install SonarScanner
+        run: |
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.1.3023-linux.zip
+          unzip sonar-scanner-cli-4.8.1.3023-linux.zip
+          export PATH=$PATH:$PWD/sonar-scanner-4.8.1.3023-linux/bin
+
       - name: SonarQube scan
-        uses: kitabisa/sonarqube-action@v1.2.0
-        with:
-          host: ${{ secrets.SONARQUBE_HOST }}
-          login: ${{ secrets.SONARQUBE_TOKEN }}
-          projectBaseDir: "."
-          projectKey: "my-custom-project"
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=my-custom-project \
+            -Dsonar.organization=my-org \
+            -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} \
+            -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} \
+            -Dsonar.projectBaseDir=Backend
 
       - name: Build jar
         run: mvn clean package -DskipTests
