@@ -40,7 +40,7 @@ jobs:
         run: mvn -B test --file Backend/pom.xml
         
       - name: Build jar
-        run: mvn clean package -DskipTests
+        run: mvn -f Backend/pom.xml clean install
 
       - name: Build & push Docker image
         uses: docker/build-push-action@v4
