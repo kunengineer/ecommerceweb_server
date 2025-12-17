@@ -39,11 +39,12 @@ jobs:
       - name: Run unit tests
         run: mvn -B test --file Backend/pom.xml
 
-      - name: Install SonarScanner and add to PATH
+      - name: Install SonarScanner
         run: |
           wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.1.3023-linux.zip
           unzip sonar-scanner-cli-4.8.1.3023-linux.zip
-          echo "PATH=$PWD/sonar-scanner-4.8.1.3023-linux/bin:$PATH" >> $GITHUB_ENV
+          chmod +x sonar-scanner-4.8.1.3023-linux/bin/sonar-scanner
+          echo "$PWD/sonar-scanner-4.8.1.3023-linux/bin" >> $GITHUB_PATH
 
       - name: SonarQube scan
         run: |
