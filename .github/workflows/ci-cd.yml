@@ -7,6 +7,20 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: ecommerce
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Kien04112004!
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout code
@@ -16,10 +30,10 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: 17
+          java-version: 21
 
       - name: Run unit tests
-        run: mvn -B test
+        run: mvn -B test --file Backend/pom.xml
 
       - name: SonarQube scan
         uses: kitabisa/sonarqube-action@v1.2.0
