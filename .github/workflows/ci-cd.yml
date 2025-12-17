@@ -37,11 +37,11 @@ jobs:
       - name: Run unit tests
         run: mvn -B test --file Backend/pom.xml
 
-      - name: Install SonarScanner
+      - name: Install SonarScanner and add to PATH
         run: |
           wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.1.3023-linux.zip
           unzip sonar-scanner-cli-4.8.1.3023-linux.zip
-          export PATH=$PATH:$PWD/sonar-scanner-4.8.1.3023-linux/bin
+          echo "PATH=$PWD/sonar-scanner-4.8.1.3023-linux/bin:$PATH" >> $GITHUB_ENV
 
       - name: SonarQube scan
         run: |
@@ -50,9 +50,6 @@ jobs:
             -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} \
             -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} \
             -Dsonar.projectBaseDir=Backend
-            
-      - name: Add SonarScanner to PATH
-        run: echo "PATH=$PWD/sonar-scanner-4.8.1.3023-linux/bin:$PATH" >> $GITHUB_ENV
 
       - name: Build jar
         run: mvn clean package -DskipTests
