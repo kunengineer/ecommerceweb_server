@@ -24,13 +24,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup JDK
-        uses: actions/setup-java@v3
+        uses: actions/checkout@v4
         with:
-          distribution: 'corretto'
+          fetch-depth: 0
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
           java-version: 21
+          
 
       - name: Run unit tests
         run: mvn -B test --file Backend/pom.xml
