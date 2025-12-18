@@ -85,4 +85,13 @@ public class OrderController {
                 new ApiResponse<>(true,"Delete order successfully",null,null,request.getRequestURI()));
     }
 
+    @PostMapping("/direct-order")
+    public ResponseEntity<ApiResponse<OrderDTO>> createDirectOrder(@RequestBody @Valid OrderCreateForm orderCreateForm, HttpServletRequest request){
+        log.info("Received direct order creation request: {}", orderCreateForm);
+        OrderDTO orders = orderService.createDirectOrder(orderCreateForm);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(true,"Create direct order successfully",orders,null,request.getRequestURI()));
+    }
+
 }

@@ -12,6 +12,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,7 +31,7 @@ public class Orders extends Timestamped {
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_infomation_id", nullable = false)
+    @JoinColumn(name = "user_infomation_id", nullable = true)
     private UserInformation userInformation;
 
     @Enumerated(EnumType.STRING)
@@ -43,7 +44,7 @@ public class Orders extends Timestamped {
     private BigDecimal totalPrice;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    private List<OrderItems> orderItems;
+    private List<OrderItems> orderItems = new ArrayList<>();;
 
     private String note;
 

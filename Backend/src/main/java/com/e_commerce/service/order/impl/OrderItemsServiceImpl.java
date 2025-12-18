@@ -79,6 +79,11 @@ public class OrderItemsServiceImpl implements OrderItemsService {
         return orderItemsRepository.saveAll(orderItems);
     }
 
+    @Override
+    public void saveAll(List<OrderItems> orderItemsList) {
+        orderItemsRepository.saveAll(orderItemsList);
+    }
+
     private OrderItems buildOrderItem(Product product, List<OptionValues> selectedOptions, Integer quantity, Orders order, String note) {
 
         if (selectedOptions.isEmpty()) {

@@ -6,6 +6,8 @@ import com.e_commerce.dto.order.orderDTO.OrderCreateForm;
 import com.e_commerce.dto.order.orderDTO.OrderCreateFromCart;
 import com.e_commerce.dto.order.orderDTO.OrderDTO;
 import com.e_commerce.dto.order.orderDTO.OrderFilter;
+import com.e_commerce.dto.order.orderItemsDTO.OrderItemsCreateForm;
+import com.e_commerce.entity.Restaurant;
 import com.e_commerce.entity.account.Account;
 import com.e_commerce.entity.account.UserInformation;
 import com.e_commerce.entity.order.CartItems;
@@ -28,6 +30,7 @@ import com.e_commerce.service.order.OrderItemsService;
 import com.e_commerce.service.order.OrderService;
 import com.e_commerce.service.product.OptionsValuesService;
 import com.e_commerce.service.product.ProductService;
+import com.e_commerce.service.retaurant.RestaurantService;
 import com.e_commerce.specification.OrderSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductService productService;
     private final OptionsValuesService optionsValuesService;
     private final OrderStatusHistoryServiceImpl orderStatusHistoryService;
+    private final RestaurantService restaurantService;
 
     @Override
     public Orders getOrderEntityById(Integer id) {
@@ -67,6 +72,8 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO createOrder(OrderCreateForm orderCreateForm) {
 
         Account account = accountService.getAccountAuth();
+
+
 
         UserInformation userInformation = userInformationService.getUserInformationEntityById(orderCreateForm.getUserInfoId());
 
@@ -107,6 +114,75 @@ public class OrderServiceImpl implements OrderService {
         return ordersMapper.convertEntityToDTO(order);
     }
 
+    @Override
+    @Transactional
+    public OrderDTO createDirectOrder(OrderCreateForm orderCreateForm) {
+        // 1. Lấy thông tin tài khoản đang đăng nhập
+        Account account = accountService.getAccountAuth();
+
+        // 2. Khởi tạo thực thể Order từ Mapper
+        Orders order = ordersMapper.convertCreateDTOToEntity(orderCreateForm);
+        order.setId(IdGenerator.getGenerationId());
+        order.setAccount(account);
+        order.setNote(orderCreateForm.getNote());
+        order.setOrderStatus(orderCreateForm.getOrderStatus());
+
+        Restaurant restaurant = restaurantService.getById(1);
+        order.setRestaurant(restaurant);
+
+        // 3. Xử lý thông tin người dùng (UserInfo) - Cho phép null
+        if (orderCreateForm.getUserInfoId() != null) {
+            UserInformation userInformation = userInformationService.getUserInformationEntityById(orderCreateForm.getUserInfoId());
+            order.setUserInformation(userInformation);
+        }
+
+        Orders savedOrder = ordersRepository.save(order);
+
+        // 4. Duyệt danh sách items gửi lên để tính tổng tiền và tạo OrderItems
+        BigDecimal total = BigDecimal.ZERO;
+        List<OrderItems> orderItemsList = new ArrayList<>();
+
+        for (OrderItemsCreateForm itemForm : orderCreateForm.getListOrderItems()) {
+            // Lấy thông tin sản phẩm từ DB để đảm bảo giá chính xác, không lấy giá từ Client gửi lên
+            var product = productService.getProductEntityById(itemForm.getProductId());
+
+            // Tính tiền: giá sản phẩm * số lượng
+            BigDecimal itemTotal = product.getPriceBase().multiply(BigDecimal.valueOf(itemForm.getQuantity()));
+            total = total.add(itemTotal);
+
+            // Tạo thực thể OrderItem
+            OrderItems orderItem = new OrderItems();
+            orderItem.setId(IdGenerator.getGenerationId());
+            orderItem.setProduct(product);
+            orderItem.setQuantity(itemForm.getQuantity());
+            orderItem.setUnitPrice(product.getPriceBase());
+            orderItem.setOrder(savedOrder);
+
+            // Xử lý OptionValues (nếu có)
+            if (itemForm.getOptionValueId() != null && !itemForm.getOptionValueId().isEmpty()) {
+                List<OptionValues> options = itemForm.getOptionValueId().stream()
+                        .map(optionsValuesService::getVariantValueEntityById)
+                        .collect(Collectors.toList());
+                orderItem.setSelectedOptions(options);
+            }
+
+            orderItemsList.add(orderItem);
+        }
+
+        savedOrder.setTotalPrice(total);
+        savedOrder.setOrderItems(orderItemsList);
+
+        // Giả định lấy nhà hàng từ sản phẩm đầu tiên trong danh sách
+        if (!orderItemsList.isEmpty()) {
+            savedOrder.setRestaurant(orderItemsList.get(0).getProduct().getRestaurant());
+        }
+
+        orderItemsService.saveAll(orderItemsList);
+
+        ordersRepository.save(savedOrder);
+
+        return ordersMapper.convertEntityToDTO(savedOrder);
+    }
     @Override
     public Orders createOrderFromEntireCart(String orderNote) {
         Account account = accountService.getAccountAuth();

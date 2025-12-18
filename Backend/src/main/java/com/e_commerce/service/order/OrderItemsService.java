@@ -17,4 +17,5 @@ public interface OrderItemsService {
 
     List<OrderItems> createOrderItemsFromCartItem(List<CartItems> cartItems, Orders order);
 
+    void saveAll(List<OrderItems> orderItemsList);
 }

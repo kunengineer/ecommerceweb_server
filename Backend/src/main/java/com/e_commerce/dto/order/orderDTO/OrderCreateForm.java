@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -22,7 +23,7 @@ public class OrderCreateForm {
 
     @NotNull(message = "Order items must not be null")
     @NotEmpty(message = "Order must have at least one item")
-    private List<OrderItemsCreateForm> listOrderItems;
+    private List<OrderItemsCreateForm> listOrderItems = new ArrayList<>();;
 
     private String note;
 

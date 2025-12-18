@@ -78,9 +78,15 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.save(payment);
 
         long amount = (orderService.getOrder().getTotalPrice().longValue()) * 100L;
-        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
-        String txnRef = String.valueOf(orderService.getOrder().getId());
+        String bankCode = request.getParameter("bankCode");
 
+        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+        String txnRef = System.currentTimeMillis() + "_" + payment.getId();
+        vnpParamsMap.put("vnp_TxnRef", txnRef);
+
+        if (bankCode != null && !bankCode.isEmpty()) {
+            vnpParamsMap.put("vnp_BankCode", bankCode);
+        }
         vnpParamsMap.put("vnp_TxnRef", String.valueOf(payment.getId()));
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang: " + txnRef);
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
@@ -88,10 +94,6 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("Amount: {}", amount);
         log.info("vnp_TxnRef: {}", vnpParamsMap.get("vnp_TxnRef"));
 
-        String bankCode = request.getParameter("bankCode");
-        if (bankCode != null && !bankCode.isEmpty()) {
-            vnpParamsMap.put("vnp_BankCode", bankCode);
-        }
         vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
         //build query url
         String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true); // Có Encode ký tự

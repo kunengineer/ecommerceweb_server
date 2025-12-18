@@ -29,7 +29,9 @@ public class OrdersMapper {
                 .note(order.getNote())
                 .orderItems(OrderItemMapper.convertPageToList(order.getOrderItems()))
                 .storeId(order.getRestaurant().getId())
-                .userInfo(userInformationMapper.convertEntityToDTO(order.getUserInformation()))
+                .userInfo(order.getUserInformation() == null
+                        ? null
+                        : userInformationMapper.convertEntityToDTO(order.getUserInformation()))
                 .build();
     }
 

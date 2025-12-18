@@ -171,7 +171,12 @@ public class AccountServiceImpl implements AccountService {
             throw new CustomException(ErrorResponse.UNAUTHORIZED);
         }
 
-        return (Account) authentication.getPrincipal();
+        String email = authentication.getName();
+
+        log.info("Authenticated user email: {}", email);
+
+        return accountRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorResponse.ACCOUNT_NOT_FOUND));
     }
       @Override
     public Account getAccountEntityById(int id) {

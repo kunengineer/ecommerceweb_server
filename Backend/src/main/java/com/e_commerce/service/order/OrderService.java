@@ -15,6 +15,8 @@ public interface OrderService {
 
     OrderDTO createOrder(OrderCreateForm orderCreateForm);
 
+    OrderDTO createDirectOrder(OrderCreateForm orderCreateForm);
+
     Orders createOrderFromEntireCart(String orderNote);
 
     OrderDTO checkout(CheckoutForm checkoutForm);
